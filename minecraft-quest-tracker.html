@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Quest Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #7CBD56;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent);
+            background-size: 16px 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            background: #8B7355;
+            border: 6px solid #5C4A3A;
+            box-shadow: inset 0 0 0 2px #A0826D, 0 8px 0 #3E2A1F;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #FFFF00;
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .date {
+            font-size: 10px;
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .achievement-section {
+            background: #2C2C2C;
+            border: 6px solid #1A1A1A;
+            box-shadow: inset 0 0 0 2px #3D3D3D, 0 8px 0 #000;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .achievement-section::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .achievement-goal {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #FFFF00;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.8;
+        }
+
+        .emeralds-display {
+            font-size: 32px;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            color: #55FF55;
+            text-shadow: 3px 3px 0 #000;
+            line-height: 1.6;
+        }
+
+        .xp-bar-container {
+            background: #1A1A1A;
+            border: 4px solid #000;
+            height: 32px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .xp-bar {
+            background: linear-gradient(to bottom, #7FFF00 0%, #32CD32 50%, #228B22 100%);
+            height: 100%;
+            transition: width 0.8s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+            position: relative;
+        }
+
+        .xp-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 100%);
+        }
+
+        .quest-list {
+            background: #C6C6C6;
+            border: 6px solid #8B8B8B;
+            box-shadow: inset 0 0 0 2px #DFDFDF, 0 8px 0 #555;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .quest-list::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .quest-list h2 {
+            font-size: 20px;
+            color: #3F3F3F;
+            text-shadow: 2px 2px 0 #FFF;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .quest-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #8B8B8B;
+            border: 4px solid #555;
+            box-shadow: inset 0 0 0 2px #A0A0A0, 0 4px 0 #3E3E3E;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            position: relative;
+        }
+
+        .quest-item::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .quest-item:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .quest-item:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 0 0 2px #A0A0A0, 0 0 0 #3E3E3E;
+        }
+
+        .quest-item.completed {
+            background: #228B22;
+            border-color: #1A6B1A;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+        }
+
+        .quest-checkbox {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #000;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+            background: #555;
+            box-shadow: inset 0 0 0 2px #777;
+        }
+
+        .quest-item.completed .quest-checkbox {
+            background: #32CD32;
+            box-shadow: inset 0 0 0 2px #7FFF00;
+        }
+
+        .quest-icon {
+            font-size: 32px;
+            margin-right: 12px;
+            filter: drop-shadow(2px 2px 0 #000);
+        }
+
+        .quest-details {
+            flex: 1;
+        }
+
+        .quest-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .quest-item.completed .quest-name {
+            color: #FFFF00;
+        }
+
+        .quest-emeralds {
+            font-size: 12px;
+            color: #55FF55;
+            text-shadow: 2px 2px 0 #000;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        .message-box {
+            background: #8B7355;
+            border: 6px solid #5C4A3A;
+            box-shadow: inset 0 0 0 2px #A0826D, 0 8px 0 #3E2A1F;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            font-weight: bold;
+            margin-bottom: 15px;
+            position: relative;
+            line-height: 1.8;
+        }
+
+        .message-box::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: #3F3F3F;
+            font-size: 16px;
+            padding: 30px;
+            text-shadow: 2px 2px 0 #FFF;
+            line-height: 1.8;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            animation: celebrate 1s ease;
+            pointer-events: none;
+            z-index: 1000;
+            filter: drop-shadow(4px 4px 0 #000);
+        }
+
+        @keyframes celebrate {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(180deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); opacity: 0; }
+        }
+
+        .footer {
+            text-align: center;
+            color: #3F3F3F;
+            font-size: 10px;
+            margin-top: 15px;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+            line-height: 1.6;
+        }
+
+        .pixel-border {
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛏️ DAILY QUESTS ⛏️</h1>
+            <div class="date" id="currentDate"></div>
+        </div>
+
+        <div class="achievement-section">
+            <div class="achievement-goal" id="achievementGoal">🏆 ACHIEVEMENT: Loading...</div>
+            <div class="emeralds-display">
+                💎 <span id="currentEmeralds">0</span> / <span id="goalEmeralds">0</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar" id="xpBar">0%</div>
+            </div>
+        </div>
+
+        <div class="quest-list">
+            <h2>📜 TODAY'S QUESTS</h2>
+            <div id="questContainer" class="loading">Loading quests...</div>
+        </div>
+
+        <div class="message-box" id="messageBox">
+            KEEP MINING! YOU'RE DOING GREAT!
+        </div>
+
+        <div class="footer">
+            LAST UPDATE: <span id="lastUpdate">--:--</span>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase configuration - REPLACE WITH YOUR CONFIG
+	  const firebaseConfig = {
+		apiKey: "AIzaSyDjljtG0D1ot_UoPEpgG9JTI6k7he7sCo8",
+		authDomain: "minecraft-quest-tracker.firebaseapp.com",
+		databaseURL: "https://minecraft-quest-tracker-default-rtdb.firebaseio.com",
+		projectId: "minecraft-quest-tracker",
+		storageBucket: "minecraft-quest-tracker.firebasestorage.app",
+		messagingSenderId: "350089516411",
+		appId: "1:350089516411:web:f7d70a6e1d749b164ed9de",
+		measurementId: "G-ZE7WBM5NY1"
+	  };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let quests = [];
+        let completions = {};
+        let currentEmeralds = 0;
+        let goalEmeralds = 100;
+        let achievementName = "DIAMOND TREASURE";
+
+        // Minecraft-style messages
+        const minecraftMessages = [
+            "AWESOME MINING! ⛏️",
+            "KEEP DIGGING! 💪",
+            "YOU'RE A LEGEND! ⭐",
+            "EPIC WORK! 🏆",
+            "CRAFT ON! 🔥",
+            "BLOCK BY BLOCK! 🧱",
+            "YOU'RE THE BEST! 👍",
+            "AMAZING BUILD! 🌈",
+            "QUEST MASTER! 🗡️",
+            "KEEP CRAFTING! 🚀"
+        ];
+
+        // Get today's date key
+        function getTodayKey() {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        // Update date display
+        function updateDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = new Date().toLocaleDateString('en-US', options).toUpperCase();
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+
+        // Show celebration animation
+        function showCelebration() {
+            const celebrations = ['💎', '⭐', '🎉', '🏆', '✨'];
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.textContent = celebrations[Math.floor(Math.random() * celebrations.length)];
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 1000);
+        }
+
+        // Update message
+        function updateMessage() {
+            const percentage = (currentEmeralds / goalEmeralds) * 100;
+            let message;
+
+            if (percentage >= 100) {
+                message = "🎉 ACHIEVEMENT UNLOCKED! 🎉";
+            } else if (percentage >= 75) {
+                message = "ALMOST THERE! SO CLOSE! 🌟";
+            } else if (percentage >= 50) {
+                message = "HALFWAY! KEEP GOING! 💪";
+            } else if (percentage >= 25) {
+                message = "GREAT START! MINE ON! 🚀";
+            } else {
+                message = minecraftMessages[Math.floor(Math.random() * minecraftMessages.length)];
+            }
+
+            document.getElementById('messageBox').textContent = message;
+        }
+
+        // Update progress display
+        function updateProgress() {
+            currentEmeralds = 0;
+            
+            // Calculate emeralds from completed quests
+            quests.forEach(quest => {
+                if (completions[quest.id]) {
+                    currentEmeralds += quest.points || 0;
+                }
+            });
+
+            const percentage = Math.min((currentEmeralds / goalEmeralds) * 100, 100);
+
+            document.getElementById('currentEmeralds').textContent = currentEmeralds;
+            document.getElementById('goalEmeralds').textContent = goalEmeralds;
+            document.getElementById('xpBar').style.width = percentage + '%';
+            document.getElementById('xpBar').textContent = Math.round(percentage) + '%';
+            
+            updateMessage();
+            updateLastUpdate();
+        }
+
+        // Toggle quest completion
+        function toggleQuest(questId) {
+            const todayKey = getTodayKey();
+            const newStatus = !completions[questId];
+            
+            database.ref(`completions/${todayKey}/${questId}`).set(newStatus)
+                .then(() => {
+                    if (newStatus) {
+                        showCelebration();
+                    }
+                })
+                .catch(error => console.error('Error updating quest:', error));
+        }
+
+        // Render quests
+        function renderQuests() {
+            const container = document.getElementById('questContainer');
+            
+            if (quests.length === 0) {
+                container.innerHTML = '<div class="loading">NO QUESTS YET! ADD SOME IN THE ADMIN PANEL.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            quests.forEach(quest => {
+                const isCompleted = completions[quest.id] || false;
+                
+                const questItem = document.createElement('div');
+                questItem.className = 'quest-item' + (isCompleted ? ' completed' : '');
+                questItem.onclick = () => toggleQuest(quest.id);
+                
+                questItem.innerHTML = `
+                    <div class="quest-checkbox">${isCompleted ? '✓' : ''}</div>
+                    <div class="quest-icon">${quest.icon || '📋'}</div>
+                    <div class="quest-details">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-emeralds">💎 +${quest.points || 0} EMERALDS</div>
+                    </div>
+                `;
+                
+                container.appendChild(questItem);
+            });
+        }
+
+        // Update last update time
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toUpperCase();
+            document.getElementById('lastUpdate').textContent = timeString;
+        }
+
+        // Listen to quests
+        database.ref('chores').on('value', (snapshot) => {
+            const data = snapshot.val();
+            quests = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+            renderQuests();
+            updateProgress();
+        });
+
+        // Listen to today's completions
+        database.ref(`completions/${getTodayKey()}`).on('value', (snapshot) => {
+            completions = snapshot.val() || {};
+            renderQuests();
+            updateProgress();
+        });
+
+        // Listen to achievement settings
+        database.ref('settings/reward').on('value', (snapshot) => {
+            const achievement = snapshot.val();
+            if (achievement) {
+                goalEmeralds = achievement.points || 100;
+                achievementName = achievement.name || "DIAMOND TREASURE";
+                document.getElementById('achievementGoal').textContent = `🏆 ACHIEVEMENT: ${achievementName.toUpperCase()}`;
+                updateProgress();
+            }
+        });
+
+        // Initialize
+        updateDate();
+        updateLastUpdate();
+        
+        // Update time every minute
+        setInterval(updateLastUpdate, 60000);
+        
+        // Update date at midnight
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                updateDate();
+                location.reload();
+            }
+        }, 60000);
+    </script>
+</body>
+</html>
