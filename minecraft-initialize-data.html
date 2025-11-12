@@ -6,14 +6,14 @@
     <title>Initialize Minecraft Quest Tracker</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
+
         body {
             font-family: 'Press Start 2P', cursive;
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
             background: #7CBD56;
-            background-image: 
+            background-image:
                 linear-gradient(0deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent),
                 linear-gradient(90deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent);
             background-size: 16px 16px;
@@ -136,11 +136,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>âš’ï¸ QUEST INITIALIZATION âš’ï¸</h1>
+        <h1>⚒️ QUEST INITIALIZATION ⚒️</h1>
         <p>THIS WILL POPULATE YOUR DATABASE WITH MINECRAFT-THEMED SAMPLE QUESTS!</p>
-        
+
         <div class="info">
-            <strong>âš ï¸ IMPORTANT:</strong>
+            <strong>⚠️ IMPORTANT:</strong>
             <ul>
                 <li>CREATED FIREBASE PROJECT</li>
                 <li>ENABLED REALTIME DATABASE</li>
@@ -152,23 +152,23 @@
         <div id="errorMessage" class="error"></div>
 
         <h2 style="color: #3F3F3F; text-shadow: 2px 2px 0 #FFF; font-size: 14px; margin: 20px 0 10px; line-height: 1.6;">SAMPLE QUESTS:</h2>
-        
+
         <ul>
-            <li>â›ï¸ MINE YOUR BED (MAKE BED) - 10 EMERALDS</li>
-            <li>ðŸª¥ MORNING POTION (BRUSH TEETH AM) - 5 EMERALDS</li>
-            <li>ðŸª¥ NIGHT POTION (BRUSH TEETH PM) - 5 EMERALDS</li>
-            <li>ðŸ½ï¸ CLEAR THE CRAFTING TABLE (DISHES) - 5 EMERALDS</li>
-            <li>ðŸ§¸ COLLECT DROPPED ITEMS (TOYS) - 10 EMERALDS</li>
-            <li>ðŸ‘• GATHER ARMOR (DIRTY CLOTHES) - 5 EMERALDS</li>
-        </ul>
-        
-        <h2 style="color: #3F3F3F; text-shadow: 2px 2px 0 #FFF; font-size: 14px; margin: 20px 0 10px; line-height: 1.6;">ACHIEVEMENT:</h2>
-        <ul>
-            <li>ðŸ’Ž DIAMOND TREASURE - 100 EMERALDS</li>
+            <li>⛏️ MINE YOUR BED (MAKE BED) - 10 EMERALDS</li>
+            <li>🪥 MORNING POTION (BRUSH TEETH AM) - 5 EMERALDS</li>
+            <li>🪥 NIGHT POTION (BRUSH TEETH PM) - 5 EMERALDS</li>
+            <li>🍽️ CLEAR THE CRAFTING TABLE (DISHES) - 5 EMERALDS</li>
+            <li>🧸 COLLECT DROPPED ITEMS (TOYS) - 10 EMERALDS</li>
+            <li>👕 GATHER ARMOR (DIRTY CLOTHES) - 5 EMERALDS</li>
         </ul>
 
-        <button onclick="initializeData()">âœ¨ CRAFT SAMPLE QUESTS</button>
-        <button onclick="clearAllData()" class="btn-danger">ðŸ—‘ï¸ CLEAR ALL DATA</button>
+        <h2 style="color: #3F3F3F; text-shadow: 2px 2px 0 #FFF; font-size: 14px; margin: 20px 0 10px; line-height: 1.6;">ACHIEVEMENT:</h2>
+        <ul>
+            <li>💎 DIAMOND TREASURE - 100 EMERALDS</li>
+        </ul>
+
+        <button onclick="initializeData()">✨ CRAFT SAMPLE QUESTS</button>
+        <button onclick="clearAllData()" class="btn-danger">🗑️ CLEAR ALL DATA</button>
 
         <h2 style="color: #3F3F3F; text-shadow: 2px 2px 0 #FFF; font-size: 14px; margin: 40px 0 10px; line-height: 1.6;">CONFIG:</h2>
         <pre id="configDisplay">LOADING...</pre>
@@ -180,21 +180,21 @@
 
     <script>
         // Firebase configuration - REPLACE WITH YOUR CONFIG
-		  const firebaseConfig = {
-			apiKey: "AIzaSyDjljtG0D1ot_UoPEpgG9JTI6k7he7sCo8",
-			authDomain: "minecraft-quest-tracker.firebaseapp.com",
-			databaseURL: "https://minecraft-quest-tracker-default-rtdb.firebaseio.com",
-			projectId: "minecraft-quest-tracker",
-			storageBucket: "minecraft-quest-tracker.firebasestorage.app",
-			messagingSenderId: "350089516411",
-			appId: "1:350089516411:web:f7d70a6e1d749b164ed9de",
-			measurementId: "G-ZE7WBM5NY1"
-		  };
+	  const firebaseConfig = {
+		apiKey: "AIzaSyDjljtG0D1ot_UoPEpgG9JTI6k7he7sCo8",
+		authDomain: "minecraft-quest-tracker.firebaseapp.com",
+		databaseURL: "https://minecraft-quest-tracker-default-rtdb.firebaseio.com",
+		projectId: "minecraft-quest-tracker",
+		storageBucket: "minecraft-quest-tracker.firebasestorage.app",
+		messagingSenderId: "350089516411",
+		appId: "1:350089516411:web:f7d70a6e1d749b164ed9de",
+		measurementId: "G-ZE7WBM5NY1"
+	  };
 
         // Check if config is updated
         if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-            document.getElementById('errorMessage').textContent = 
-                'âš ï¸ UPDATE FIREBASE CONFIG FIRST!';
+            document.getElementById('errorMessage').textContent =
+                '⚠️ UPDATE FIREBASE CONFIG FIRST!';
             document.getElementById('errorMessage').style.display = 'block';
             document.querySelectorAll('button').forEach(btn => btn.disabled = true);
         }
@@ -212,8 +212,8 @@
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
         } catch (error) {
-            document.getElementById('errorMessage').textContent = 
-                'âŒ FIREBASE ERROR: ' + error.message;
+            document.getElementById('errorMessage').textContent =
+                '❌ FIREBASE ERROR: ' + error.message;
             document.getElementById('errorMessage').style.display = 'block';
         }
 
@@ -222,37 +222,43 @@
             'quest_bed': {
                 name: 'MINE YOUR BED',
                 points: 10,
-                icon: 'â›ï¸',
+                icon: '⛏️',
+                daysActive: 'all',
                 createdAt: Date.now()
             },
             'quest_brush_morning': {
                 name: 'MORNING POTION',
                 points: 5,
-                icon: 'ðŸª¥',
+                icon: '🪥',
+                daysActive: 'all',
                 createdAt: Date.now() + 1
             },
             'quest_brush_night': {
                 name: 'NIGHT POTION',
                 points: 5,
-                icon: 'ðŸª¥',
+                icon: '🪥',
+                daysActive: 'all',
                 createdAt: Date.now() + 2
             },
             'quest_dishes': {
                 name: 'CLEAR CRAFTING TABLE',
                 points: 5,
-                icon: 'ðŸ½ï¸',
+                icon: '🍽️',
+                daysActive: 'all',
                 createdAt: Date.now() + 3
             },
             'quest_toys': {
                 name: 'COLLECT DROPPED ITEMS',
                 points: 10,
-                icon: 'ðŸ§¸',
+                icon: '🧸',
+                daysActive: 'all',
                 createdAt: Date.now() + 4
             },
             'quest_clothes': {
                 name: 'GATHER ARMOR',
                 points: 5,
-                icon: 'ðŸ‘•',
+                icon: '👕',
+                daysActive: 'all',
                 createdAt: Date.now() + 5
             }
         };
@@ -276,20 +282,20 @@
                 await database.ref('totals/goal_reached_date').set(null);
 
                 document.getElementById('successMessage').textContent =
-                    'âœ… QUESTS CRAFTED! OPEN ADMIN OR DISPLAY!';
+                    '✅ QUESTS CRAFTED! OPEN ADMIN OR DISPLAY!';
                 document.getElementById('successMessage').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
 
             } catch (error) {
-                document.getElementById('errorMessage').textContent = 
-                    'âŒ ERROR: ' + error.message;
+                document.getElementById('errorMessage').textContent =
+                    '❌ ERROR: ' + error.message;
                 document.getElementById('errorMessage').style.display = 'block';
             }
         }
 
         // Clear all data
         async function clearAllData() {
-            if (!confirm('âš ï¸ DELETE EVERYTHING?')) {
+            if (!confirm('⚠️ DELETE EVERYTHING?')) {
                 return;
             }
 
@@ -303,22 +309,16 @@
                 await database.ref('settings').remove();
                 await database.ref('totals').remove();
 
-                document.getElementById('successMessage').textContent = 
-                    'ðŸ—‘ï¸ ALL DATA CLEARED!';
+                document.getElementById('successMessage').textContent =
+                    '🗑️ ALL DATA CLEARED!';
                 document.getElementById('successMessage').style.display = 'block';
-                
+
             } catch (error) {
-                document.getElementById('errorMessage').textContent = 
-                    'âŒ ERROR: ' + error.message;
+                document.getElementById('errorMessage').textContent =
+                    '❌ ERROR: ' + error.message;
                 document.getElementById('errorMessage').style.display = 'block';
             }
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-

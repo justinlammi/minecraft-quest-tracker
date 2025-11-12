@@ -430,7 +430,22 @@
                 <input type="text" id="questIcon" readonly value="⛏️">
                 <div class="emoji-picker" id="emojiPicker"></div>
             </div>
-            
+
+            <div class="form-group">
+                <label>DAYS ACTIVE:</label>
+                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="daysActive" value="all" checked onchange="selectedDaysActive='all'"> ALL DAYS
+                    </label>
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="daysActive" value="weekday" onchange="selectedDaysActive='weekday'"> WEEKDAYS
+                    </label>
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="daysActive" value="weekend" onchange="selectedDaysActive='weekend'"> WEEKENDS
+                    </label>
+                </div>
+            </div>
+
             <button onclick="addQuest()">✨ CRAFT QUEST</button>
         </div>
 
@@ -529,6 +544,21 @@
                 <div class="emoji-picker" id="editEmojiPicker"></div>
             </div>
 
+            <div class="form-group">
+                <label>DAYS ACTIVE:</label>
+                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="editDaysActive" value="all" checked onchange="editSelectedDaysActive='all'"> ALL DAYS
+                    </label>
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="editDaysActive" value="weekday" onchange="editSelectedDaysActive='weekday'"> WEEKDAYS
+                    </label>
+                    <label style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF; background: #555; padding: 10px; border: 2px solid #777;">
+                        <input type="radio" name="editDaysActive" value="weekend" onchange="editSelectedDaysActive='weekend'"> WEEKENDS
+                    </label>
+                </div>
+            </div>
+
             <div class="modal-buttons">
                 <button onclick="saveEdit()" class="btn-warning">💾 SAVE</button>
                 <button onclick="closeEditModal()" class="btn-secondary">❌ CANCEL</button>
@@ -559,9 +589,11 @@
 
         // Minecraft-themed emojis
         const emojis = ['⛏️', '⚔️', '🛡️', '💎', '🪓', '🔱', '🏹', '🗡️', '🛏️', '🪥', '🍽️', '🧹', '📚', '🎒', '🧸', '👕'];
-        
+
         let selectedEmoji = '⛏️';
         let editSelectedEmoji = '⛏️';
+        let selectedDaysActive = 'all';
+        let editSelectedDaysActive = 'all';
         let currentEditingQuestId = null;
         let quests = [];
         let completions = {};
@@ -572,6 +604,16 @@
         function getTodayKey() {
             const today = new Date();
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        // Get days active label
+        function getDaysActiveLabel(daysActive) {
+            const labels = {
+                'all': 'ALL DAYS',
+                'weekday': 'WEEKDAYS',
+                'weekend': 'WEEKENDS'
+            };
+            return labels[daysActive] || 'ALL DAYS';
         }
 
         // Show success message
@@ -645,17 +687,20 @@
             }
 
             const questId = 'chore_' + Date.now();
-            
+
             database.ref(`chores/${questId}`).set({
                 name: name,
                 points: points,
                 icon: selectedEmoji,
+                daysActive: selectedDaysActive,
                 createdAt: Date.now()
             }).then(() => {
                 showSuccess('✅ QUEST CRAFTED!');
                 document.getElementById('questName').value = '';
                 document.getElementById('questEmeralds').value = '5';
                 selectEmoji('⛏️');
+                selectedDaysActive = 'all';
+                document.querySelector('input[name="daysActive"][value="all"]').checked = true;
             }).catch(error => {
                 alert('ERROR: ' + error.message);
             });
@@ -670,7 +715,12 @@
             document.getElementById('editQuestName').value = quest.name;
             document.getElementById('editQuestEmeralds').value = quest.points;
             selectEditEmoji(quest.icon || '⛏️');
-            
+
+            // Set days active radio button
+            editSelectedDaysActive = quest.daysActive || 'all';
+            const radioButton = document.querySelector(`input[name="editDaysActive"][value="${editSelectedDaysActive}"]`);
+            if (radioButton) radioButton.checked = true;
+
             document.getElementById('editModal').classList.add('active');
         }
 
@@ -695,7 +745,8 @@
             database.ref(`chores/${currentEditingQuestId}`).update({
                 name: name,
                 points: points,
-                icon: editSelectedEmoji
+                icon: editSelectedEmoji,
+                daysActive: editSelectedDaysActive
             }).then(() => {
                 showSuccess('✅ QUEST UPDATED!');
                 closeEditModal();
@@ -795,7 +846,7 @@
             
             quests.forEach(quest => {
                 const isCompleted = completions[quest.id] || false;
-                
+
                 const item = document.createElement('div');
                 item.className = 'quest-list-item';
                 item.innerHTML = `
@@ -803,7 +854,7 @@
                         <div class="quest-emoji">${quest.icon || '⛏️'}</div>
                         <div class="quest-details">
                             <h3>${quest.name} ${isCompleted ? '✅' : ''}</h3>
-                            <div class="quest-emeralds">💎 ${quest.points} EMERALDS</div>
+                            <div class="quest-emeralds">💎 ${quest.points} EMERALDS • ${getDaysActiveLabel(quest.daysActive)}</div>
                         </div>
                     </div>
                     <div class="quest-actions">

@@ -38,7 +38,7 @@
             background: #8B7355;
             border: 6px solid #5C4A3A;
             box-shadow: inset 0 0 0 2px #A0826D, 0 8px 0 #3E2A1F;
-            padding: 20px;
+            padding: 18px;
             margin-bottom: 15px;
             text-align: center;
             position: relative;
@@ -114,7 +114,7 @@
         .xp-bar-container {
             background: #1A1A1A;
             border: 4px solid #000;
-            height: 24px;
+            height: 30px;
             overflow: hidden;
             margin-bottom: 8px;
             position: relative;
@@ -128,7 +128,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 9px;
+            font-size: 11px;
             color: white;
             text-shadow: 2px 2px 0 #000;
             position: relative;
@@ -176,7 +176,7 @@
         .quest-item {
             display: flex;
             align-items: center;
-            padding: 12px 14px;
+            padding: 16px 14px;
             margin-bottom: 10px;
             background: #8B8B8B;
             border: 4px solid #555;
@@ -233,7 +233,7 @@
         }
 
         .quest-icon {
-            font-size: 28px;
+            font-size: 32px;
             margin-right: 12px;
             filter: drop-shadow(2px 2px 0 #000);
         }
@@ -243,7 +243,7 @@
         }
 
         .quest-name {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: bold;
             color: #FFF;
             text-shadow: 2px 2px 0 #000;
@@ -251,7 +251,7 @@
         }
 
         .quest-emeralds {
-            font-size: 10px;
+            font-size: 12px;
             color: #55FF55;
             text-shadow: 1px 1px 0 #000;
             margin-top: 3px;
@@ -406,6 +406,13 @@
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         }
 
+        // Get current day type (weekday/weekend)
+        function getDayType() {
+            const day = new Date().getDay(); // 0=Sunday, 6=Saturday
+            if (day === 0 || day === 6) return 'weekend';
+            return 'weekday';
+        }
+
         // Update date display
         function updateDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -495,21 +502,29 @@
         // Render quests
         function renderQuests() {
             const container = document.getElementById('questContainer');
-            
+
             if (quests.length === 0) {
                 container.innerHTML = '<div class="loading">NO QUESTS YET! ADD SOME IN THE ADMIN PANEL.</div>';
                 return;
             }
 
             container.innerHTML = '';
-            
+
+            const dayType = getDayType();
+
             quests.forEach(quest => {
+                // Filter quests based on daysActive field
+                const daysActive = quest.daysActive || 'all';
+                if (daysActive !== 'all' && daysActive !== dayType) {
+                    return; // Skip this quest
+                }
+
                 const isCompleted = completions[quest.id] || false;
-                
+
                 const questItem = document.createElement('div');
                 questItem.className = 'quest-item' + (isCompleted ? ' completed' : '');
                 questItem.onclick = () => toggleQuest(quest.id);
-                
+
                 questItem.innerHTML = `
                     <div class="quest-checkbox">${isCompleted ? '✓' : ''}</div>
                     <div class="quest-icon">${quest.icon || '📋'}</div>
@@ -518,7 +533,7 @@
                         <div class="quest-emeralds">💎 +${quest.points || 0} EMERALDS</div>
                     </div>
                 `;
-                
+
                 container.appendChild(questItem);
             });
         }
