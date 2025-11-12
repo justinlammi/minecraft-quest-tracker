@@ -272,12 +272,14 @@
             try {
                 await database.ref('chores').set(sampleQuests);
                 await database.ref('settings/reward').set(sampleAchievement);
-                
-                document.getElementById('successMessage').textContent = 
+                await database.ref('totals/cumulative_emeralds').set(0);
+                await database.ref('totals/goal_reached_date').set(null);
+
+                document.getElementById('successMessage').textContent =
                     'âœ… QUESTS CRAFTED! OPEN ADMIN OR DISPLAY!';
                 document.getElementById('successMessage').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
-                
+
             } catch (error) {
                 document.getElementById('errorMessage').textContent = 
                     'âŒ ERROR: ' + error.message;
@@ -299,7 +301,8 @@
                 await database.ref('chores').remove();
                 await database.ref('completions').remove();
                 await database.ref('settings').remove();
-                
+                await database.ref('totals').remove();
+
                 document.getElementById('successMessage').textContent = 
                     'ðŸ—‘ï¸ ALL DATA CLEARED!';
                 document.getElementById('successMessage').style.display = 'block';

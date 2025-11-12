@@ -384,6 +384,7 @@
         let currentEmeralds = 0;
         let goalEmeralds = 100;
         let achievementName = "DIAMOND TREASURE";
+        let goalReachedDate = null;
 
         // Minecraft-style messages
         const minecraftMessages = [
@@ -446,14 +447,7 @@
 
         // Update progress display
         function updateProgress() {
-            currentEmeralds = 0;
-            
-            // Calculate emeralds from completed quests
-            quests.forEach(quest => {
-                if (completions[quest.id]) {
-                    currentEmeralds += quest.points || 0;
-                }
-            });
+            // currentEmeralds is now set from Firebase listener, not calculated here
 
             const percentage = Math.min((currentEmeralds / goalEmeralds) * 100, 100);
 
@@ -461,7 +455,7 @@
             document.getElementById('goalEmeralds').textContent = goalEmeralds;
             document.getElementById('xpBar').style.width = percentage + '%';
             document.getElementById('xpBar').textContent = Math.round(percentage) + '%';
-            
+
             updateMessage();
             updateLastUpdate();
         }
@@ -470,8 +464,26 @@
         function toggleQuest(questId) {
             const todayKey = getTodayKey();
             const newStatus = !completions[questId];
-            
+            const quest = quests.find(q => q.id === questId);
+
+            if (!quest) return;
+
+            const pointsDelta = newStatus ? quest.points : -quest.points;
+
+            // Update both completion status and cumulative emeralds
             database.ref(`completions/${todayKey}/${questId}`).set(newStatus)
+                .then(() => {
+                    // Update cumulative emeralds
+                    return database.ref('totals/cumulative_emeralds').transaction((current) => {
+                        return Math.max(0, (current || 0) + pointsDelta);
+                    });
+                })
+                .then(() => {
+                    // Check if goal reached
+                    if (currentEmeralds >= goalEmeralds && !goalReachedDate) {
+                        return database.ref('totals/goal_reached_date').set(getTodayKey());
+                    }
+                })
                 .then(() => {
                     if (newStatus) {
                         showCelebration();
@@ -518,6 +530,23 @@
             document.getElementById('lastUpdate').textContent = timeString;
         }
 
+        // Check if midnight reset is needed (goal was reached on a previous day)
+        function checkMidnightReset() {
+            if (!goalReachedDate) return;
+
+            const today = getTodayKey();
+            if (goalReachedDate !== today) {
+                // Goal was reached on a different day, perform reset with overflow
+                const overflow = currentEmeralds % goalEmeralds;
+
+                database.ref('totals/cumulative_emeralds').set(overflow)
+                    .then(() => {
+                        return database.ref('totals/goal_reached_date').set(null);
+                    })
+                    .catch(error => console.error('Error resetting emeralds:', error));
+            }
+        }
+
         // Listen to quests
         database.ref('chores').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -542,6 +571,18 @@
                 document.getElementById('achievementGoal').textContent = `🏆 ACHIEVEMENT: ${achievementName.toUpperCase()}`;
                 updateProgress();
             }
+        });
+
+        // Listen to cumulative emeralds
+        database.ref('totals/cumulative_emeralds').on('value', (snapshot) => {
+            currentEmeralds = snapshot.val() || 0;
+            updateProgress();
+        });
+
+        // Listen to goal reached date
+        database.ref('totals/goal_reached_date').on('value', (snapshot) => {
+            goalReachedDate = snapshot.val();
+            checkMidnightReset();
         });
 
         // Initialize
