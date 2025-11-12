@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialize Emerald Totals</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #7CBD56;
+            background-image:
+                linear-gradient(0deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent);
+            background-size: 16px 16px;
+        }
+        .container {
+            background: #C6C6C6;
+            border: 6px solid #8B8B8B;
+            box-shadow: inset 0 0 0 2px #DFDFDF, 0 8px 0 #555;
+            padding: 30px;
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+        h1 {
+            color: #FFFF00;
+            text-shadow: 3px 3px 0 #000;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        p {
+            font-size: 10px;
+            line-height: 1.8;
+            color: #3F3F3F;
+            text-shadow: 1px 1px 0 #FFF;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #228B22;
+            color: #FFF;
+            border: 4px solid #1A6B1A;
+            padding: 14px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+            margin: 10px 5px;
+            line-height: 1.6;
+            width: 100%;
+        }
+        button:hover {
+            background: #2FB52F;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 0 0 #0F4F0F;
+        }
+        .success {
+            background: #228B22;
+            border: 4px solid #1A6B1A;
+            color: #FFF;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+            font-size: 11px;
+            text-align: center;
+        }
+        .error {
+            background: #DC143C;
+            border: 4px solid #B22222;
+            color: #FFF;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #FF6347, 0 4px 0 #8B0000;
+            font-size: 10px;
+        }
+        .info {
+            background: #4169E1;
+            border: 4px solid #1E3A8A;
+            color: #FFF;
+            padding: 15px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #6495ED, 0 4px 0 #0F1F5A;
+        }
+        .info p {
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            font-size: 9px;
+        }
+        strong {
+            color: #FFFF00;
+            text-shadow: 2px 2px 0 #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💎 INITIALIZE EMERALD TOTALS 💎</h1>
+
+        <div class="info">
+            <p><strong>WHAT THIS DOES:</strong></p>
+            <p>This will add the new cumulative emerald tracking structure to your database WITHOUT changing any existing quests or settings.</p>
+            <p style="margin-top: 10px;"><strong>SAFE TO RUN:</strong> Your quests and completions will not be affected.</p>
+        </div>
+
+        <p style="text-align: center;">Click the button below to initialize the totals structure:</p>
+
+        <button onclick="initializeTotals()">✨ INITIALIZE TOTALS</button>
+
+        <div id="successMessage" class="success"></div>
+        <div id="errorMessage" class="error"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase configuration - REPLACE WITH YOUR CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjljtG0D1ot_UoPEpgG9JTI6k7he7sCo8",
+            authDomain: "minecraft-quest-tracker.firebaseapp.com",
+            databaseURL: "https://minecraft-quest-tracker-default-rtdb.firebaseio.com",
+            projectId: "minecraft-quest-tracker",
+            storageBucket: "minecraft-quest-tracker.firebasestorage.app",
+            messagingSenderId: "350089516411",
+            appId: "1:350089516411:web:f7d70a6e1d749b164ed9de",
+            measurementId: "G-ZE7WBM5NY1"
+        };
+
+        // Check if config is updated
+        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+            document.getElementById('errorMessage').textContent =
+                '⚠️ UPDATE FIREBASE CONFIG FIRST!';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.querySelector('button').disabled = true;
+        }
+
+        // Initialize Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (error) {
+            document.getElementById('errorMessage').textContent =
+                '❌ FIREBASE ERROR: ' + error.message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        // Initialize totals only
+        async function initializeTotals() {
+            if (!confirm('INITIALIZE CUMULATIVE EMERALD TOTALS?\n\nYour existing quests and data will NOT be changed.')) {
+                return;
+            }
+
+            try {
+                // Check if totals already exist
+                const totalsSnapshot = await database.ref('totals').once('value');
+
+                if (totalsSnapshot.exists()) {
+                    if (!confirm('Totals structure already exists. OVERWRITE with zeros?')) {
+                        return;
+                    }
+                }
+
+                // Initialize the totals structure
+                await database.ref('totals/cumulative_emeralds').set(0);
+                await database.ref('totals/goal_reached_date').set(null);
+
+                document.getElementById('successMessage').textContent =
+                    '✅ TOTALS INITIALIZED! Cumulative emerald tracking is now active. You can close this page.';
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+
+            } catch (error) {
+                document.getElementById('errorMessage').textContent =
+                    '❌ ERROR: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
