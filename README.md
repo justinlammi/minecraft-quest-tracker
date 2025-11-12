@@ -20,12 +20,12 @@ Transform your child's daily chores into exciting Minecraft quests! A gamified c
 - 🔄 **Auto-resets daily** at midnight
 
 ### For Parents
-- 📱 **Easy admin panel** - manage quests from any device
+- 📱 **Easy admin panel** - manage quests from your computer
 - ✏️ **Edit quests** - change names, points, and icons on the fly
 - 🎨 **Customizable icons** - choose from 16 Minecraft-themed emojis
 - 📈 **Track progress** - see daily completion stats
-- 🌐 **Cloud-based** - access from anywhere
-- 🚀 **GitHub Pages ready** - free web hosting included
+- 🌐 **Cloud-based** - Firebase syncs across all devices
+- 🔒 **Secure deployment** - display embedded in DakBoard, admin local-only
 - 🔄 **Quick reset** - clear today's completions if needed
 - 💾 **Persistent data** - emeralds accumulate toward achievements
 
@@ -79,17 +79,15 @@ Transform your child's daily chores into exciting Minecraft quests! A gamified c
 - Google account (for Firebase)
 - Web browser (Chrome, Firefox, Safari, Edge)
 - Text editor (Notepad, TextEdit, VS Code, etc.)
-- **For deployment, one of:**
-  - GitHub account (for GitHub Pages - recommended)
-  - Raspberry Pi with DakBoard (for local deployment)
-  - Any device that can display web pages
+- **For deployment:**
+  - DakBoard account or display device with custom HTML widget support
+  - Computer to save and access admin panel locally
 
 ### Setup Time
 - **Firebase setup**: 15-20 minutes (one-time)
 - **Testing**: 5-10 minutes
-- **Deployment (GitHub Pages)**: 5-10 minutes
-- **Deployment (Raspberry Pi)**: 10-15 minutes
-- **Total**: 25-45 minutes depending on deployment method
+- **DakBoard widget setup**: 5-10 minutes
+- **Total**: 25-40 minutes
 
 ---
 
@@ -192,117 +190,83 @@ Transform your child's daily chores into exciting Minecraft quests! A gamified c
    - Edit a quest in admin
    - Watch it update in display
 
-### Step 5: Deployment Options
+### Step 5: Deploy to DakBoard
 
-Choose the deployment method that works best for you:
+**Deployment Strategy:**
+- **Display**: Embed HTML source directly in DakBoard Custom HTML widget (secure, no public hosting)
+- **Admin Panel**: Save locally on your computers (file:// access only)
 
 ---
 
-#### **Option A: GitHub Pages (Recommended - Easy & Free)**
+#### **Part A: DakBoard Widget Setup (Display)**
 
-**Best for:** Easy setup, accessible from anywhere, automatic updates when you push changes
+1. **Copy Display File Source Code**
+   - Open `minecraft-quest-tracker.html` in your text editor
+   - Select all content (Ctrl+A / Cmd+A)
+   - Copy to clipboard (Ctrl+C / Cmd+C)
 
-**Live Example:** https://justinlammi.github.io/minecraft-quest-tracker/minecraft-quest-tracker.html
-
-1. **Create GitHub Repository**
-   - Go to https://github.com/new
-   - Repository name: `minecraft-quest-tracker`
-   - Set to Public (required for free GitHub Pages)
-   - Click "Create repository"
-
-2. **Upload Your Files**
-   ```bash
-   # In your project folder
-   git init
-   git add minecraft-quest-tracker.html
-   git add minecraft-quest-tracker-admin.html
-   git add minecraft-initialize-data.html
-   git add README.md
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/YOUR-USERNAME/minecraft-quest-tracker.git
-   git push -u origin main
-   ```
-
-   **Or use GitHub Desktop:**
-   - Open GitHub Desktop
-   - File → Add Local Repository
-   - Select your project folder
-   - Commit changes
-   - Publish to GitHub
-
-3. **Enable GitHub Pages**
-   - Go to your repository on GitHub
-   - Click "Settings" tab
-   - Click "Pages" in left sidebar
-   - Under "Source", select "Deploy from a branch"
-   - Branch: `main`, Folder: `/ (root)`
+2. **Create DakBoard Custom HTML Widget**
+   - Log in to your DakBoard account
+   - Go to your screen settings
+   - Click "Add Block" or "+"
+   - Select "Custom HTML" widget
+   - Paste the entire HTML source code
+   - Set refresh rate: 60 seconds (recommended)
+   - Position and size as desired
    - Click "Save"
-   - Wait 1-2 minutes for deployment
 
-4. **Get Your URL**
-   - Your site will be at: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/`
-   - Display: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/minecraft-quest-tracker.html`
-   - Admin: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/minecraft-quest-tracker-admin.html`
+3. **Test the Widget**
+   - Preview your DakBoard screen
+   - Verify quests appear correctly
+   - Try clicking/tapping a quest to complete it
+   - Confirm celebration animation plays
+   - Check emerald counter updates
 
-5. **Configure DakBoard**
-   - Open DakBoard settings
-   - Add new "Custom URL" block
-   - Enter URL: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/minecraft-quest-tracker.html`
-   - Set refresh rate: 60 seconds
-   - Position and size as desired
-   - Save and preview
-
-6. **Access Admin Panel**
-   - Open admin URL in browser
-   - Bookmark for easy access
-   - Works from any device with internet
-
-**Benefits:**
-- ✅ Accessible from anywhere with internet
-- ✅ No Raspberry Pi needed
-- ✅ Free hosting
-- ✅ Easy updates (just push to GitHub)
-- ✅ Automatic HTTPS
-- ✅ Works on any DakBoard device
+**Benefits of Widget Embedding:**
+- ✅ No public URL exposure
+- ✅ Source code never hosted publicly
+- ✅ Works on any DakBoard-compatible device
+- ✅ Auto-refreshes keep display current
+- ✅ Direct Firebase connection (no intermediate server)
 
 ---
 
-#### **Option B: Raspberry Pi Local Files (Offline)**
+#### **Part B: Local Admin Access**
 
-**Best for:** Offline setup, local network only, more control
+1. **Save Admin File Locally**
+   - Save `minecraft-quest-tracker-admin.html` to a permanent location on your computer
+   - **Suggested locations:**
+     - Windows: `C:\Users\YourName\Documents\minecraft-admin.html`
+     - Mac: `/Users/YourName/Documents/minecraft-admin.html`
+     - Cloud sync: Dropbox, Google Drive, OneDrive folder for access from multiple devices
 
-1. **Transfer Display File**
-   ```bash
-   # SSH into your Pi
-   ssh pi@your-pi-address
+2. **Create Bookmarks**
+   - Open `minecraft-quest-tracker-admin.html` in your browser (file:// protocol)
+   - **Windows example:** `file:///C:/Users/YourName/Documents/minecraft-admin.html`
+   - **Mac example:** `file:///Users/YourName/Documents/minecraft-admin.html`
+   - Bookmark the page in your browser
+   - Optional: Add to browser favorites bar for quick access
+   - Repeat on your spouse's computer
 
-   # Create directory
-   mkdir -p /home/pi/minecraft-quests
+3. **Test Admin Panel**
+   - Click your bookmark to open admin panel
+   - Verify all quests appear
+   - Try editing a quest
+   - Check that DakBoard display updates in real-time
+   - Test adding/deleting quests
 
-   # Copy file to Pi (from your computer)
-   scp minecraft-quest-tracker.html pi@your-pi-address:/home/pi/minecraft-quests/
-   ```
+4. **Mobile Access (Optional)**
+   - Email the admin HTML file to yourself
+   - Save to phone's file storage or cloud app
+   - Open in mobile browser when needed
+   - Works offline once Firebase data is cached
 
-2. **Add to DakBoard**
-   - Open DakBoard settings
-   - Add new "Custom URL" block
-   - Enter URL: `file:///home/pi/minecraft-quests/minecraft-quest-tracker.html`
-   - Set refresh rate: 60 seconds
-   - Position and size as desired
-   - Save and preview
-
-3. **Access Admin Panel**
-   - Upload `minecraft-quest-tracker-admin.html` to web hosting, OR
-   - Save on your computer and open locally
-   - Bookmark for easy access
-
-**Benefits:**
-- ✅ Works offline (if Firebase was cached)
-- ✅ Local files, full control
-- ✅ No public GitHub repository needed
-- ❌ Requires Raspberry Pi
-- ❌ Updates require manual file transfer
+**Benefits of Local Admin:**
+- ✅ Zero public exposure
+- ✅ No authentication needed (physical device security)
+- ✅ Works without internet (after initial Firebase connection)
+- ✅ No hosting costs
+- ✅ Complete privacy and control
 
 ---
 
@@ -487,31 +451,42 @@ const emojis = ['⛏️', '⚔️', '🛡️', /* add more here */];
 
 ---
 
-## 📱 Access Admin Panel Remotely
+## 📱 Access Admin Panel
 
-### Option 1: GitHub Pages (Best - If Using GitHub Deployment)
-- Admin panel automatically hosted alongside display
-- Access from anywhere: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/minecraft-quest-tracker-admin.html`
-- Bookmark on phone/computer
-- No additional setup needed
-- Updates automatically when you push changes
+### Recommended: Local File Access
+**Current deployment uses this method for security**
 
-### Option 2: Keep on Computer
-- Save admin file in Documents
-- Bookmark in browser
-- Open when needed
-- Works offline
+- Save `minecraft-quest-tracker-admin.html` to a permanent location
+- Bookmark the file:// URL in your browser
+- Open when needed from bookmarks/favorites
+- Works on both computers via file sync (Google Drive, Dropbox, OneDrive)
+- Zero security risk - file never exposed publicly
 
-### Option 3: Save to Phone
-- Email file to yourself
-- Save to phone
+### Mobile Access Options
+
+**Option 1: Save to Cloud Storage**
+- Upload admin HTML to Google Drive, Dropbox, or iCloud
+- Access from phone's cloud storage app
 - Open in mobile browser
-- Works offline
+- Syncs automatically when you update the file
 
-### Option 4: Other Web Hosting (Advanced)
-- Upload to Netlify, Vercel, or other hosting service
-- Access via URL from anywhere
-- May require account/setup
+**Option 2: Email to Yourself**
+- Email file as attachment to yourself
+- Save to phone storage
+- Open in mobile browser when needed
+- Manual updates required
+
+**Option 3: Local Storage Apps**
+- Use file manager app (Files on iOS, My Files on Android)
+- Save admin HTML file
+- Tap to open in browser
+- Works offline after initial Firebase connection
+
+### Future Option: Add Authentication (Advanced)
+If you later want remote web access with security:
+- Implement Firebase Authentication
+- Host admin panel with password protection
+- See CLAUDE.md for implementation guidance
 
 ---
 
@@ -565,47 +540,43 @@ const emojis = ['⛏️', '⚔️', '🛡️', /* add more here */];
 3. Check system clock isn't changing dates
 4. Completions reset at midnight (this is normal)
 
-### Display Won't Show on DakBoard
+### Display Won't Show on DakBoard Widget
 
-**Problem:** File path or permissions issue
-
-**Solutions (Raspberry Pi):**
-1. Verify file path: `file:///home/pi/minecraft-quests/minecraft-quest-tracker.html`
-2. Check file permissions: `chmod 644 minecraft-quest-tracker.html`
-3. Test by opening file directly in Pi's browser first
-4. Check DakBoard refresh rate is set
-
-**Solutions (GitHub Pages):**
-1. Verify URL is correct: `https://YOUR-USERNAME.github.io/minecraft-quest-tracker/minecraft-quest-tracker.html`
-2. Check GitHub Pages is enabled in repository settings
-3. Wait 2-3 minutes after pushing changes (deployment delay)
-4. Test URL in regular browser first
-5. Check that repository is Public (required for free GitHub Pages)
-6. Clear DakBoard cache and reload
-
-### GitHub Pages Shows 404 Error
-
-**Problem:** Page not found
+**Problem:** Custom HTML widget not rendering
 
 **Solutions:**
-1. Check repository name matches URL
-2. Verify GitHub Pages is enabled (Settings → Pages)
-3. Ensure branch is set to `main` and folder to `/ (root)`
-4. File names are case-sensitive - use exact names
-5. Wait 1-2 minutes after enabling GitHub Pages
-6. Check repository is Public
+1. Verify you pasted the ENTIRE HTML source code (including `<!DOCTYPE html>` and closing `</html>`)
+2. Check Firebase config is correctly embedded in the pasted code
+3. Test the HTML file in a regular browser first (open locally)
+4. Ensure DakBoard refresh rate is set (60 seconds recommended)
+5. Check DakBoard widget size is adequate (minimum 400x600px recommended)
+6. Try removing and re-adding the widget
+7. Clear DakBoard cache and reload screen
 
-### Changes Not Showing on GitHub Pages
+### DakBoard Widget Shows "Loading quests..."
 
-**Problem:** Updated files but page shows old version
+**Problem:** Firebase connection issue in embedded widget
 
 **Solutions:**
-1. GitHub Pages has a cache delay (1-5 minutes)
-2. Hard refresh in browser: Ctrl+Shift+R (Cmd+Shift+R on Mac)
-3. Check your commit was pushed: `git log` or view on GitHub
-4. Clear browser cache
-5. Try incognito/private browsing mode
-6. DakBoard may need cache clear + refresh
+1. Verify Firebase config in HTML source has correct `databaseURL`
+2. Check internet connection on DakBoard device
+3. Confirm Firebase security rules allow reading: `".read": true`
+4. Test by opening the HTML file directly in a browser
+5. Check browser console for Firebase errors (if accessible)
+6. Ensure external scripts can load (Firebase SDK from CDN)
+
+### Changes Not Showing in DakBoard Widget
+
+**Problem:** Updated HTML but widget shows old version
+
+**Solutions:**
+1. DakBoard caches widget content
+2. Edit the widget and paste updated HTML source
+3. Save widget changes
+4. Force refresh: remove widget, wait 30 seconds, re-add with new source
+5. Check that you copied the updated HTML file (not old version)
+6. Clear DakBoard cache in settings
+7. Wait for auto-refresh cycle (based on refresh rate setting)
 
 ---
 
@@ -640,16 +611,38 @@ minecraft-quest-tracker/
 
 ## 🔒 Security Notes
 
-### Current Setup
-- Database uses test mode rules (read/write allowed)
-- Suitable for home use behind firewall
-- No authentication required
-- Firebase config is public (this is normal)
+### Current Secure Deployment
+Your setup prioritizes privacy and security:
 
-### For Production/Public Use
-If you want to secure this for public internet:
+**Display (DakBoard Widget):**
+- HTML source embedded directly in DakBoard
+- Never hosted on public internet
+- No URL for outsiders to discover
+- Only accessible via your DakBoard account
 
-1. **Add Authentication:**
+**Admin Panel (Local Files):**
+- Saved locally on your computers only
+- Accessed via file:// protocol (never on web)
+- Requires physical access to your devices
+- Can be synced via private cloud storage (Google Drive, Dropbox)
+
+**Firebase Database:**
+- Test mode rules (read/write allowed)
+- Long, random database URL (unlikely to be discovered)
+- No sensitive personal data stored (just quest names and completions)
+- Firebase API key is public by design (normal for client-side apps)
+
+### Why This Is Secure
+1. **No public attack surface** - neither display nor admin panel are publicly accessible
+2. **Physical security** - admin requires access to your actual computers
+3. **Private widget** - DakBoard widgets are private to your account
+4. **Minimal data exposure** - even if database URL was discovered, only chore names are visible
+5. **Perfect for family use** - right level of security without complexity
+
+### For Future Public or Multi-Family Use
+If you later want to share with other families securely:
+
+1. **Add Firebase Authentication:**
    ```json
    {
      "rules": {
@@ -659,16 +652,17 @@ If you want to secure this for public internet:
    }
    ```
 
-2. **Implement Firebase Auth:**
-   - Add Firebase Authentication
-   - Update HTML files to require login
-   - Restrict database access to authenticated users
+2. **Implement User-Specific Data:**
+   - Separate data paths per family: `/families/{familyId}/chores/`
+   - Add login UI to admin panel
+   - Each family sees only their own data
 
 ### Privacy
 - No personal data is collected
 - No analytics or tracking
 - All data stays in your Firebase project
 - You control all data
+- No third parties have access
 
 ---
 
@@ -775,12 +769,19 @@ Use this tracker to teach:
 
 ## 📝 Version History
 
-### v2.1 (Current)
-- 🌐 Added GitHub Pages deployment option (recommended)
-- 📝 Updated README with deployment choices
-- 🔧 Fixed file name references in documentation
-- 📚 Enhanced troubleshooting for web hosting
-- 🔗 Live example: https://justinlammi.github.io/minecraft-quest-tracker/
+### v2.2 (Current)
+- 🔒 Enhanced security: Display embedded in DakBoard widget (no public hosting)
+- 🏠 Local-only admin access for maximum privacy
+- 📝 Updated documentation for secure deployment approach
+- 🛡️ Removed public GitHub Pages deployment
+- 💎 Added cumulative emerald tracking with goal-based resets
+- 📚 Enhanced troubleshooting for DakBoard widget deployment
+
+### v2.1
+- 🎨 Fine-tuned quest display sizing
+- 📏 Improved readability with optimized spacing
+- 🔧 Added weekday/weekend quest filtering
+- ⚡ Enhanced cache prevention
 
 ### v2.0
 - ✨ Added edit functionality to admin panel
@@ -817,5 +818,7 @@ Remember: The goal is to make chores fun and build responsibility. Don't stress 
 ---
 
 **Made with ❤️ for parents and kids who love Minecraft**
+
+**Deployment:** DakBoard widget (display) + Local files (admin) = Maximum security & privacy
 
 *Last updated: January 2025*

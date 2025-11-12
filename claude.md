@@ -15,8 +15,41 @@ This is a **family-friendly Minecraft-themed quest/chore tracker** designed to g
 ### Tech Stack
 - **Frontend:** Pure vanilla HTML5, CSS3, JavaScript ES6+
 - **Backend:** Firebase Realtime Database (NoSQL cloud database)
-- **Deployment:** Static files (GitHub Pages or local file system)
+- **Deployment:**
+  - **Display:** DakBoard Custom HTML widget (embedded, no public hosting)
+  - **Admin:** Local file access only (file:// protocol)
 - **No Build Process:** Files run directly in browser - no compilation needed
+
+### Current Deployment Strategy (v2.2)
+
+**Security-First Approach:**
+This deployment eliminates all public exposure while maintaining full functionality.
+
+**Display File (`minecraft-quest-tracker.html`):**
+- Entire HTML source embedded in DakBoard Custom HTML widget
+- DakBoard renders the widget on their private display
+- No URL, no hosting, no public access
+- Firebase connection happens client-side from the widget
+- Updates require re-pasting HTML source into widget
+
+**Admin File (`minecraft-quest-tracker-admin.html`):**
+- Saved to local computers/devices only
+- Accessed via `file:///path/to/file.html` in browser
+- Bookmarked for easy access
+- Can be synced via private cloud storage (Google Drive, Dropbox) for multi-device access
+- Never exposed to public internet
+
+**Benefits of This Approach:**
+1. Zero attack surface - no public URLs to discover
+2. Complete privacy - HTML source never leaves user's control
+3. Simple - no authentication/authorization complexity needed
+4. Secure - requires physical device access to admin
+5. Functional - Firebase sync works perfectly from both embedded widget and local file
+
+**Trade-offs:**
+- Display updates require manual widget re-paste (rare - only when Firebase config changes or features added)
+- Admin access requires local file (acceptable for single-family use)
+- No remote admin without additional setup (intentional security choice)
 
 ### Real-time Synchronization
 All three HTML files connect to the same Firebase Realtime Database using listeners:
@@ -226,16 +259,27 @@ Consider these for future customization:
 
 ## Security Model
 
-### Current Setup: Test Mode
+### Current Setup: Secure Local Deployment
 - **Authentication:** None (family/private use)
-- **Security Rules:** `{".read": true, ".write": true}`
-- **Access Control:** Relies on obscure database URL
+- **Security Rules:** `{".read": true, ".write": true}` (test mode)
+- **Display Access:** Embedded in DakBoard widget - no public URL
+- **Admin Access:** Local file:// only - never exposed publicly
+- **Access Control:** Physical device security + obscure Firebase database URL
 
-### Security Considerations
-1. **Firebase API keys are public by design** - they identify the project, not authenticate users
-2. **Database URL is long and random** - unlikely to be discovered
-3. **Perfect for family/local network use**
-4. **For public deployment:** Add Firebase Authentication and update rules to `"auth != null"`
+### Security Advantages of Current Deployment
+1. **Display HTML never hosted publicly** - source code embedded directly in DakBoard widget
+2. **Admin panel never exposed** - local file access only (file:// protocol)
+3. **No attack surface** - no public URLs to discover or exploit
+4. **Firebase API keys are public by design** - they identify the project, not authenticate users
+5. **Database URL is long and random** - unlikely to be discovered without access to HTML source
+6. **Perfect for family/private use** - maximum privacy with minimal complexity
+
+### For Future Multi-Family or Public Use
+If you want to expand access while maintaining security:
+- Add Firebase Authentication (email/password or Google Sign-In)
+- Update security rules to require authentication: `{".read": "auth != null", ".write": "auth != null"}`
+- Implement user-specific data paths: `/users/{userId}/chores/`
+- Host admin panel with authentication required
 
 ## Important Features to Preserve
 
@@ -301,21 +345,26 @@ Completions are stored by date (`/completions/2025-11-11/`), so:
    - Edit `minecraft-quest-tracker.html`
    - Find `loadChores()` function for rendering logic
    - Maintain Minecraft theming (fonts, colors, emojis)
+   - **IMPORTANT:** After changes, re-paste entire HTML source into DakBoard widget
 
 2. **Changing Admin Features:**
    - Edit `minecraft-quest-tracker-admin.html`
    - Emoji picker logic: Lines ~300-330
    - Stats calculation: `updateStats()` function
+   - Save updated file to local locations (overwrite existing)
+   - Bookmarks will automatically use updated version
 
 3. **Updating Firebase Config:**
    - **MUST update all three HTML files identically**
    - Search for `firebaseConfig` in each file
    - Replace entire object including all keys
+   - **CRITICAL:** Re-paste display file into DakBoard widget after config change
 
 4. **Customizing Styles:**
    - CSS is embedded in `<style>` tags in each file
    - Look for `.minecraft-*` classes
    - Maintain Press Start 2P font for authenticity
+   - Display changes require DakBoard widget re-paste
 
 ### Testing Locally
 
@@ -331,9 +380,11 @@ Completions are stored by date (`/completions/2025-11-11/`), so:
 - [ ] Security rules set (test mode for family use)
 - [ ] Firebase config copied to all three HTML files
 - [ ] `minecraft-initialize-data.html` run once to load sample data
-- [ ] Files uploaded to GitHub Pages or local server
-- [ ] Display file URL accessible on target device (DakBoard, tablet, etc.)
-- [ ] Admin panel bookmarked for parent access
+- [ ] Display HTML source embedded in DakBoard Custom HTML widget
+- [ ] DakBoard widget tested and rendering correctly
+- [ ] Admin file saved to permanent local location on both computers
+- [ ] Admin panel bookmarked (file:// URL) on both computers
+- [ ] Optional: Admin file uploaded to shared cloud storage for mobile access
 
 ## Dependencies
 
@@ -395,12 +446,15 @@ Completions are stored by date (`/completions/2025-11-11/`), so:
 
 ## Version Information
 
-- **Current Version:** v2.1
-- **Last Updated:** Based on git history
+- **Current Version:** v2.2
+- **Last Updated:** January 2025
 - **Recent Changes:**
-  - Adjusted CSS styles for quest tracker layout
-  - Refined padding and margin for quest items
-  - Refactored CSS for better maintainability
+  - Enhanced security: DakBoard widget deployment (no public hosting)
+  - Local-only admin access for maximum privacy
+  - Removed GitHub Pages deployment
+  - Added cumulative emerald tracking with goal-based resets
+  - Updated all documentation for secure deployment approach
+  - Enhanced troubleshooting for DakBoard widget issues
 
 ---
 
