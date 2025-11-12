@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Quest Tracker - Admin</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #7CBD56;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(60, 179, 113, .3) 25%, rgba(60, 179, 113, .3) 26%, transparent 27%, transparent 74%, rgba(60, 179, 113, .3) 75%, rgba(60, 179, 113, .3) 76%, transparent 77%, transparent);
+            background-size: 16px 16px;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #FFFF00;
+            margin-bottom: 10px;
+            font-size: 24px;
+            text-shadow: 3px 3px 0 #000;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .subtitle {
+            color: #FFF;
+            margin-bottom: 30px;
+            font-size: 12px;
+            text-shadow: 2px 2px 0 #000;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: #C6C6C6;
+            border: 6px solid #8B8B8B;
+            box-shadow: inset 0 0 0 2px #DFDFDF, 0 8px 0 #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        .section h2 {
+            color: #3F3F3F;
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-shadow: 2px 2px 0 #FFF;
+            border-bottom: 4px solid #8B8B8B;
+            padding-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #3F3F3F;
+            font-size: 10px;
+            text-shadow: 1px 1px 0 #FFF;
+            line-height: 1.6;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 4px solid #555;
+            background: #8B8B8B;
+            color: #FFF;
+            font-size: 14px;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 0 2px #A0A0A0;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder {
+            color: #CCC;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #FFFF00;
+            background: #A0A0A0;
+        }
+
+        .emoji-picker {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .emoji-option {
+            font-size: 28px;
+            padding: 10px;
+            border: 4px solid #555;
+            background: #8B8B8B;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: inset 0 0 0 2px #A0A0A0, 0 4px 0 #3E3E3E;
+        }
+
+        .emoji-option:hover {
+            background: #A0A0A0;
+            transform: translateY(-2px);
+        }
+
+        .emoji-option:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 0 0 2px #A0A0A0, 0 0 0 #3E3E3E;
+        }
+
+        .emoji-option.selected {
+            background: #228B22;
+            border-color: #1A6B1A;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+        }
+
+        button {
+            background: #228B22;
+            color: #FFF;
+            border: 4px solid #1A6B1A;
+            padding: 14px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+            line-height: 1.6;
+        }
+
+        button:hover {
+            background: #2FB52F;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 0 0 #0F4F0F;
+        }
+
+        .btn-danger {
+            background: #DC143C;
+            border-color: #B22222;
+            box-shadow: inset 0 0 0 2px #FF6347, 0 4px 0 #8B0000;
+        }
+
+        .btn-danger:hover {
+            background: #FF6347;
+        }
+
+        .btn-danger:active {
+            box-shadow: inset 0 0 0 2px #FF6347, 0 0 0 #8B0000;
+        }
+
+        .btn-secondary {
+            background: #4169E1;
+            border-color: #1E3A8A;
+            box-shadow: inset 0 0 0 2px #6495ED, 0 4px 0 #0F1F5A;
+        }
+
+        .btn-secondary:hover {
+            background: #6495ED;
+        }
+
+        .btn-secondary:active {
+            box-shadow: inset 0 0 0 2px #6495ED, 0 0 0 #0F1F5A;
+        }
+
+        .btn-warning {
+            background: #FF8C00;
+            border-color: #CC7000;
+            box-shadow: inset 0 0 0 2px #FFA500, 0 4px 0 #995500;
+        }
+
+        .btn-warning:hover {
+            background: #FFA500;
+        }
+
+        .btn-warning:active {
+            box-shadow: inset 0 0 0 2px #FFA500, 0 0 0 #995500;
+        }
+
+        .quest-list-item {
+            background: #8B8B8B;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 4px solid #555;
+            box-shadow: inset 0 0 0 2px #A0A0A0, 0 4px 0 #3E3E3E;
+        }
+
+        .quest-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quest-emoji {
+            font-size: 32px;
+            filter: drop-shadow(2px 2px 0 #000);
+        }
+
+        .quest-details h3 {
+            font-size: 14px;
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 5px;
+            line-height: 1.6;
+        }
+
+        .quest-emeralds {
+            color: #55FF55;
+            font-weight: bold;
+            font-size: 10px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.6;
+        }
+
+        .quest-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quest-actions button {
+            padding: 10px 15px;
+            font-size: 10px;
+        }
+
+        .success-message {
+            background: #228B22;
+            border: 4px solid #1A6B1A;
+            color: #FFF;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 0 2px #2FB52F, 0 4px 0 #0F4F0F;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #3F3F3F;
+            text-shadow: 1px 1px 0 #FFF;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.3));
+        }
+
+        .empty-state p {
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #2C2C2C;
+            border: 4px solid #1A1A1A;
+            padding: 20px;
+            text-align: center;
+            box-shadow: inset 0 0 0 2px #3D3D3D, 0 4px 0 #000;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #55FF55;
+            text-shadow: 3px 3px 0 #000;
+            line-height: 1.4;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.6;
+        }
+
+        /* Edit Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #C6C6C6;
+            border: 6px solid #8B8B8B;
+            box-shadow: inset 0 0 0 2px #DFDFDF, 0 8px 0 #555;
+            padding: 30px;
+            max-width: 800px;
+            width: 95%;
+            max-height: 95vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #000;
+            pointer-events: none;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .modal-content::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .modal-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .modal-header {
+            color: #3F3F3F;
+            font-size: 18px;
+            text-shadow: 2px 2px 0 #FFF;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #8B8B8B;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚒️ CRAFTING TABLE ⚒️</h1>
+        <div class="subtitle">MINECRAFT QUEST ADMIN PANEL</div>
+
+        <div id="successMessage" class="success-message"></div>
+
+        <!-- Add Quest Section -->
+        <div class="section">
+            <h2>➕ CRAFT NEW QUEST</h2>
+            
+            <div class="form-group">
+                <label for="questName">QUEST NAME:</label>
+                <input type="text" id="questName" placeholder="MINE YOUR BED">
+            </div>
+            
+            <div class="form-group">
+                <label for="questEmeralds">EMERALD REWARD:</label>
+                <input type="number" id="questEmeralds" value="5" min="1" max="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="questIcon">QUEST ICON:</label>
+                <input type="text" id="questIcon" readonly value="⛏️">
+                <div class="emoji-picker" id="emojiPicker"></div>
+            </div>
+            
+            <button onclick="addQuest()">✨ CRAFT QUEST</button>
+        </div>
+
+        <!-- Existing Quests -->
+        <div class="section">
+            <h2>📜 CURRENT QUESTS</h2>
+            <div id="questsList"></div>
+        </div>
+
+        <!-- Achievement Settings -->
+        <div class="section">
+            <h2>🏆 ACHIEVEMENT GOAL</h2>
+            
+            <div class="form-group">
+                <label for="achievementName">ACHIEVEMENT NAME:</label>
+                <input type="text" id="achievementName" placeholder="DIAMOND TREASURE">
+            </div>
+            
+            <div class="form-group">
+                <label for="achievementEmeralds">EMERALDS NEEDED:</label>
+                <input type="number" id="achievementEmeralds" value="100" min="10" max="1000">
+            </div>
+            
+            <button onclick="saveAchievement()">💾 SAVE ACHIEVEMENT</button>
+        </div>
+
+        <!-- Today's Stats -->
+        <div class="section">
+            <h2>📊 TODAY'S STATS</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label">TOTAL QUESTS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statCompleted">0</div>
+                    <div class="stat-label">COMPLETED</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statEmeralds">0</div>
+                    <div class="stat-label">EMERALDS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statProgress">0%</div>
+                    <div class="stat-label">PROGRESS</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>⚡ QUICK ACTIONS</h2>
+            <button onclick="resetToday()" class="btn-danger">🔄 RESET TODAY</button>
+            <button onclick="window.open('minecraft-quest-tracker.html', '_blank')" class="btn-secondary" style="margin-left: 10px;">👀 PREVIEW</button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">✏️ EDIT QUEST</div>
+            
+            <div class="form-group">
+                <label for="editQuestName">QUEST NAME:</label>
+                <input type="text" id="editQuestName" placeholder="QUEST NAME">
+            </div>
+            
+            <div class="form-group">
+                <label for="editQuestEmeralds">EMERALD REWARD:</label>
+                <input type="number" id="editQuestEmeralds" value="5" min="1" max="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="editQuestIcon">QUEST ICON:</label>
+                <input type="text" id="editQuestIcon" readonly value="⛏️">
+                <div class="emoji-picker" id="editEmojiPicker"></div>
+            </div>
+
+            <div class="modal-buttons">
+                <button onclick="saveEdit()" class="btn-warning">💾 SAVE</button>
+                <button onclick="closeEditModal()" class="btn-secondary">❌ CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase configuration - REPLACE WITH YOUR CONFIG
+		  const firebaseConfig = {
+			apiKey: "AIzaSyDjljtG0D1ot_UoPEpgG9JTI6k7he7sCo8",
+			authDomain: "minecraft-quest-tracker.firebaseapp.com",
+			databaseURL: "https://minecraft-quest-tracker-default-rtdb.firebaseio.com",
+			projectId: "minecraft-quest-tracker",
+			storageBucket: "minecraft-quest-tracker.firebasestorage.app",
+			messagingSenderId: "350089516411",
+			appId: "1:350089516411:web:f7d70a6e1d749b164ed9de",
+			measurementId: "G-ZE7WBM5NY1"
+		  };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Minecraft-themed emojis
+        const emojis = ['⛏️', '⚔️', '🛡️', '💎', '🪓', '🔱', '🏹', '🗡️', '🛏️', '🪥', '🍽️', '🧹', '📚', '🎒', '🧸', '👕'];
+        
+        let selectedEmoji = '⛏️';
+        let editSelectedEmoji = '⛏️';
+        let currentEditingQuestId = null;
+        let quests = [];
+        let completions = {};
+        let achievement = { name: 'DIAMOND TREASURE', points: 100 };
+
+        // Get today's date key
+        function getTodayKey() {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize emoji picker
+        function initEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            const editPicker = document.getElementById('editEmojiPicker');
+            picker.innerHTML = '';
+            editPicker.innerHTML = '';
+            
+            emojis.forEach(emoji => {
+                // Main picker
+                const option = document.createElement('div');
+                option.className = 'emoji-option';
+                option.textContent = emoji;
+                option.onclick = () => selectEmoji(emoji);
+                picker.appendChild(option);
+
+                // Edit picker
+                const editOption = document.createElement('div');
+                editOption.className = 'emoji-option';
+                editOption.textContent = emoji;
+                editOption.onclick = () => selectEditEmoji(emoji);
+                editPicker.appendChild(editOption);
+            });
+        }
+
+        // Select emoji for new quest
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            document.getElementById('questIcon').value = emoji;
+            
+            document.querySelectorAll('#emojiPicker .emoji-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.textContent === emoji) {
+                    el.classList.add('selected');
+                }
+            });
+        }
+
+        // Select emoji for edit quest
+        function selectEditEmoji(emoji) {
+            editSelectedEmoji = emoji;
+            document.getElementById('editQuestIcon').value = emoji;
+            
+            document.querySelectorAll('#editEmojiPicker .emoji-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.textContent === emoji) {
+                    el.classList.add('selected');
+                }
+            });
+        }
+
+        // Add quest
+        function addQuest() {
+            const name = document.getElementById('questName').value.trim();
+            const points = parseInt(document.getElementById('questEmeralds').value) || 5;
+
+            if (!name) {
+                alert('PLEASE ENTER A QUEST NAME');
+                return;
+            }
+
+            const questId = 'chore_' + Date.now();
+            
+            database.ref(`chores/${questId}`).set({
+                name: name,
+                points: points,
+                icon: selectedEmoji,
+                createdAt: Date.now()
+            }).then(() => {
+                showSuccess('✅ QUEST CRAFTED!');
+                document.getElementById('questName').value = '';
+                document.getElementById('questEmeralds').value = '5';
+                selectEmoji('⛏️');
+            }).catch(error => {
+                alert('ERROR: ' + error.message);
+            });
+        }
+
+        // Open edit modal
+        function editQuest(questId) {
+            const quest = quests.find(q => q.id === questId);
+            if (!quest) return;
+
+            currentEditingQuestId = questId;
+            document.getElementById('editQuestName').value = quest.name;
+            document.getElementById('editQuestEmeralds').value = quest.points;
+            selectEditEmoji(quest.icon || '⛏️');
+            
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditingQuestId = null;
+        }
+
+        // Save edited quest
+        function saveEdit() {
+            if (!currentEditingQuestId) return;
+
+            const name = document.getElementById('editQuestName').value.trim();
+            const points = parseInt(document.getElementById('editQuestEmeralds').value) || 5;
+
+            if (!name) {
+                alert('PLEASE ENTER A QUEST NAME');
+                return;
+            }
+
+            database.ref(`chores/${currentEditingQuestId}`).update({
+                name: name,
+                points: points,
+                icon: editSelectedEmoji
+            }).then(() => {
+                showSuccess('✅ QUEST UPDATED!');
+                closeEditModal();
+            }).catch(error => {
+                alert('ERROR: ' + error.message);
+            });
+        }
+
+        // Delete quest
+        function deleteQuest(questId) {
+            if (confirm('DELETE THIS QUEST?')) {
+                database.ref(`chores/${questId}`).remove()
+                    .then(() => showSuccess('🗑️ QUEST REMOVED'))
+                    .catch(error => alert('ERROR: ' + error.message));
+            }
+        }
+
+        // Save achievement
+        function saveAchievement() {
+            const name = document.getElementById('achievementName').value.trim();
+            const points = parseInt(document.getElementById('achievementEmeralds').value);
+
+            if (!name || !points) {
+                alert('FILL IN ALL FIELDS');
+                return;
+            }
+
+            database.ref('settings/reward').set({
+                name: name.toUpperCase(),
+                points: points
+            }).then(() => {
+                showSuccess('🏆 ACHIEVEMENT SAVED!');
+            }).catch(error => {
+                alert('ERROR: ' + error.message);
+            });
+        }
+
+        // Reset today
+        function resetToday() {
+            if (confirm('RESET TODAY? THIS CANNOT BE UNDONE.')) {
+                const todayKey = getTodayKey();
+                database.ref(`completions/${todayKey}`).remove()
+                    .then(() => showSuccess('🔄 TODAY RESET'))
+                    .catch(error => alert('ERROR: ' + error.message));
+            }
+        }
+
+        // Render quests
+        function renderQuests() {
+            const container = document.getElementById('questsList');
+            
+            if (quests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📜</div>
+                        <p>NO QUESTS YET.<br>CRAFT YOUR FIRST!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            quests.forEach(quest => {
+                const isCompleted = completions[quest.id] || false;
+                
+                const item = document.createElement('div');
+                item.className = 'quest-list-item';
+                item.innerHTML = `
+                    <div class="quest-info">
+                        <div class="quest-emoji">${quest.icon || '⛏️'}</div>
+                        <div class="quest-details">
+                            <h3>${quest.name} ${isCompleted ? '✅' : ''}</h3>
+                            <div class="quest-emeralds">💎 ${quest.points} EMERALDS</div>
+                        </div>
+                    </div>
+                    <div class="quest-actions">
+                        <button onclick="editQuest('${quest.id}')" class="btn-warning">EDIT</button>
+                        <button onclick="deleteQuest('${quest.id}')" class="btn-danger">DELETE</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = quests.length;
+            let completed = 0;
+            let emeralds = 0;
+
+            quests.forEach(quest => {
+                if (completions[quest.id]) {
+                    completed++;
+                    emeralds += quest.points || 0;
+                }
+            });
+
+            const progress = achievement.points > 0 ? Math.round((emeralds / achievement.points) * 100) : 0;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statEmeralds').textContent = emeralds;
+            document.getElementById('statProgress').textContent = progress + '%';
+        }
+
+        // Listen to quests
+        database.ref('chores').on('value', (snapshot) => {
+            const data = snapshot.val();
+            quests = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+            renderQuests();
+            updateStats();
+        });
+
+        // Listen to completions
+        database.ref(`completions/${getTodayKey()}`).on('value', (snapshot) => {
+            completions = snapshot.val() || {};
+            renderQuests();
+            updateStats();
+        });
+
+        // Listen to achievement
+        database.ref('settings/reward').on('value', (snapshot) => {
+            achievement = snapshot.val() || { name: 'DIAMOND TREASURE', points: 100 };
+            document.getElementById('achievementName').value = achievement.name;
+            document.getElementById('achievementEmeralds').value = achievement.points;
+            updateStats();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // Initialize
+        initEmojiPicker();
+        selectEmoji('⛏️');
+    </script>
+</body>
+</html>
